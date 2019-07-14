@@ -18,7 +18,7 @@
       <ion-list>
         <ion-item *ngFor="let position of positions">
           <ion-avatar slot="start">
-            <img src="../assets/imgs/bitcoin.png">
+            <img src="../assets/imgs/{{position.symbol}}.png"><h6><b>{{position.symbol}}</b></h6>
           </ion-avatar>
           <ion-label>
             <h5><b>Size</b>:{{position.currentQty}}</h5>

@@ -19,12 +19,8 @@ export class Tab1Page {
 
   }
   Buy() {
-    console.log("intentando buy");
-    
     this.bitmex.leverage=this.leverage;
     this.bitmex.CreateOrder(this.symbol,this.type,"Buy",this.price,this.quantity).then(data=>{
-      console.log("PARECE");
-        console.log(data);
     });
 
     // wss=new WebSocket("wss://testnet.bitmex.com/realtime?subscribe=instrument,orderBook:XBTUSD");
@@ -32,6 +28,10 @@ export class Tab1Page {
 
   }
   Sell(){
+    this.bitmex.leverage=this.leverage;
+    this.bitmex.CreateOrder(this.symbol,this.type,"Sell",this.price,this.quantity).then(data=>{
+    });
+
 
   }
 }
