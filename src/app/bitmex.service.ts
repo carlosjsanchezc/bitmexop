@@ -58,22 +58,21 @@ async setLeverage(symbol:string,leverage:number){
   }
 }
 
-async getPositions(symbol:string,leverage:number){
+async getPositions(symbol:string){
   let fecha = new Date();
   let balance = { walletBalance: 0, marginBalance: 0 };
   let nonce = fecha.getTime() * 100 + fecha.getMilliseconds();
   var shaObj = new jsSHA("SHA-256", "TEXT");
   shaObj.setHMACKey(this.secret, "TEXT");
-  //let params2 = { 'leverage': leverage,'symbol': symbol   };
-  //let params = "leverage=" + leverage.toPrecision()+"&symbol=" + symbol   ;
-  shaObj.update("POST/api/v1/position" + nonce.toString() );
+  let params2 = { 'symbol': symbol,'reverse':true   };
+  let params = "symbol=" + symbol+"&reverse=true"   ;
+  shaObj.update("GET/api/v1/position?"+params + nonce.toString() );
   var hmac = shaObj.getHMAC("HEX");
   let header = { 'accept-charset'	:'UTF-8','content-type':'application/x-www-form-urlencoded; charset=UTF-8', 'api-signature': hmac, 'api-key': this.id, 'api-nonce': nonce.toString(), 'Connection': 'Keep-Alive', 'Keep-Alive': '90','user-agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36' };
-  let url = 'https://testnet.bitmex.com/api/v1/position';
+  let url = 'https://testnet.bitmex.com/api/v1/position?'+params;
   this.webClient.setSSLCertMode("nocheck");
   try {
     let myd = await this.webClient.get(url, {}, header);
-    console.log("Positions:",myd);
     return myd;
   } 
   catch (error) {
@@ -81,6 +80,27 @@ async getPositions(symbol:string,leverage:number){
   }
 }
 
+async getActiveOrders(symbol:string){
+  let fecha = new Date();
+  let balance = { walletBalance: 0, marginBalance: 0 };
+  let nonce = fecha.getTime() * 100 + fecha.getMilliseconds();
+  var shaObj = new jsSHA("SHA-256", "TEXT");
+  shaObj.setHMACKey(this.secret, "TEXT");
+  let params2 = { 'symbol': symbol,'reverse':true   };
+  let params = "symbol=" + symbol+"&reverse=true"   ;
+  shaObj.update("GET/api/v1/order?"+params + nonce.toString() );
+  var hmac = shaObj.getHMAC("HEX");
+  let header = { 'accept-charset'	:'UTF-8','content-type':'application/x-www-form-urlencoded; charset=UTF-8', 'api-signature': hmac, 'api-key': this.id, 'api-nonce': nonce.toString(), 'Connection': 'Keep-Alive', 'Keep-Alive': '90','user-agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36' };
+  let url = 'https://testnet.bitmex.com/api/v1/order?'+params;
+  this.webClient.setSSLCertMode("nocheck");
+  try {
+    let myd = await this.webClient.get(url, {}, header);
+    return myd;
+  } 
+  catch (error) {
+    return error;
+  }
+}
 
 
 

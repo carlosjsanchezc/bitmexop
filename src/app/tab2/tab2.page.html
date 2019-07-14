@@ -1,11 +1,43 @@
 <ion-header>
-    <ion-toolbar color="primary">
-      <ion-title>
-        Colocar Orden
-      </ion-title>
-    </ion-toolbar>
-  </ion-header>
-  
-  <ion-content>
-      <ion-img src="https://www.bitmex.com/img/bitmex-logo-v2-alt-white.png"></ion-img>
-  </ion-content>
+  <ion-toolbar color="primary">
+    <ion-title>
+      Colocar Orden
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-img src="https://www.bitmex.com/img/bitmex-logo-v2-alt-white.png"></ion-img>
+  <ion-card color="secondary">
+    <ion-card-header color="primary">
+      <ion-card-subtitle>Active Orders</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      
+
+      <ion-list>
+        <ion-item *ngFor="let position of positions">
+          <ion-avatar slot="start">
+            <img src="../assets/imgs/bitcoin.png">
+          </ion-avatar>
+          <ion-label>
+            <h5><b>Size</b>:{{position.currentQty}}</h5>
+            <h5><b>Leverage</b>:{{position.leverage}}X</h5>
+            
+            <h5><b>Value:</b> {{(position.lastValue/100000000).toLocaleString()}}</h5>
+            <h5><b>Entry Price:</b> {{position.avgEntryPrice.toLocaleString()}}</h5>
+            <h5><b>Liq Price:</b> {{position.liquidationPrice.toLocaleString()}}</h5>
+            <h5><b>Margin:</b> {{(position.posMargin/100000000).toLocaleString()}}</h5>
+            <h5><b>Break Even:</b> {{position.breakEvenPrice.toLocaleString()}}</h5>
+
+            <h5><b>ROE:</b> {{(position.unrealisedPnl/100000000).toLocaleString()}} / {{(position.unrealisedRoePcnt*100).toLocaleString()}}% </h5>
+           
+          </ion-label>
+          <ion-icon slot="end" name="close-circle" color="danger"></ion-icon>
+          <ion-icon name="create" slot="end"></ion-icon>
+        </ion-item>
+
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+</ion-content>
