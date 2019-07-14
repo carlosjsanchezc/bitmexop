@@ -1,5 +1,8 @@
 {
   "name": "bimexop",
-  "integrations": {},
-  "type": "angular"
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "angular",
+  "id": "f5d2add3"
 }

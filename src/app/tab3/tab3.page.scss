@@ -1,1 +1,19 @@
 
+
+.welcome-card ion-img {
+    max-height: 35vh;
+    overflow: hidden;
+  }
+  ion-content{
+    --background: none;
+    background-image: url('/assets/bmbg.jpg');
+    background-position: center top;
+    background-repeat: no-repeat;
+  }
+  .bg-image {
+    background: url('../../assets/bmbg.jpg') no-repeat center center fixed;
+    background-size: cover;
+  }
+  .no-scroll .scroll-content {
+    overflow: hidden;
+  }

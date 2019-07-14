@@ -1,41 +1,53 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar color="primary">
     <ion-title>
-      Tab One
+      Colocar Orden
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-    <ion-card class="welcome-card">
-      <ion-img src="/assets/shapes.svg"></ion-img>
-      <ion-card-header>
-        <ion-card-subtitle>Get Started</ion-card-subtitle>
-        <ion-card-title>Welcome to Ionic</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <p>Now that your app has been created, you'll want to start building out features and components. Check out some of the resources below for next steps.</p>
-      </ion-card-content>
-    </ion-card>
-    <ion-list lines="none">
-      <ion-list-header>
-        <ion-label>Resources</ion-label>
-      </ion-list-header>
-      <ion-item href="https://ionicframework.com/docs/">
-        <ion-icon slot="start" color="medium" name="book"></ion-icon>
-        <ion-label>Ionic Documentation</ion-label>
+    <ion-img src="https://www.bitmex.com/img/bitmex-logo-v2-alt-white.png"></ion-img>
+
+  <ion-card color="secondary">
+    <ion-card-header color="primary">
+      <ion-card-subtitle>Place Order</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label>Pair</ion-label>
+        <ion-select placeholder="Symbol" interface="popover" [(ngModel)]="symbol">
+          <ion-select-option value="XBTUSD">XBTUSD</ion-select-option>
+          <ion-select-option value="ETHUSD">ETHUSD</ion-select-option>
+        </ion-select>
       </ion-item>
-      <ion-item href="https://ionicframework.com/docs/building/scaffolding">
-        <ion-icon slot="start" color="medium" name="build"></ion-icon>
-        <ion-label>Scaffold Out Your App</ion-label>
+      <ion-item>
+        <ion-label>Type</ion-label>
+        <ion-select placeholder="Select Order Type" interface="popover" [(ngModel)]="type"> 
+          <ion-select-option value="Limit">Limit</ion-select-option>
+          <ion-select-option value="Market">Market</ion-select-option>
+          <ion-select-option value="Stop Market">Stop Market</ion-select-option>
+        </ion-select>
       </ion-item>
-      <ion-item href="https://ionicframework.com/docs/layout/structure">
-        <ion-icon slot="start" color="medium" name="grid"></ion-icon>
-        <ion-label>Change Your App Layout</ion-label>
+      <ion-item>
+        <ion-label>Leverage</ion-label>
+        <ion-input type="number" [(ngModel)]="leverage" class="ion-text-right"></ion-input>
       </ion-item>
-      <ion-item href="https://ionicframework.com/docs/theming/basics">
-        <ion-icon slot="start" color="medium" name="color-fill"></ion-icon>
-        <ion-label>Theme Your App</ion-label>
+      <ion-item>
+        <ion-label>Quantity</ion-label>
+        <ion-input type="text" class="ion-text-right" [(ngModel)]="quantity"></ion-input>
       </ion-item>
-    </ion-list>
+      <ion-row>
+        <ion-col size="6">
+          <ion-button expand="block" (click)="Buy()" color="success">
+            Buy/Long </ion-button>
+        </ion-col>
+        <ion-col size="6">
+          <ion-button expand="block" (click)="Sell()" color="danger">
+            Sell/Short
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-card-content>
+  </ion-card>
 </ion-content>
