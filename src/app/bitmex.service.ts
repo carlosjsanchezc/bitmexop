@@ -8,8 +8,11 @@ import jsSHA from 'jssha';
   providedIn: 'root'
 })
 export class BitmexService {
+ // id: string='LHy6MoqSreBWl3NxKE3dQdN3';
+  //secret: string='bCKND8pl_-I89v5yHuKgMa8fjy9E4FZVUPUvtDC4UMhRCq-j';
   id: string;
   secret: string;
+ 
   logged: boolean = false;
   leverage:number=5;
   constructor(private webClient: HTTP,private http:HttpClient,private platform:Platform) { }
