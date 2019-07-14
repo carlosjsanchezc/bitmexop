@@ -33,6 +33,9 @@ export class BitmexService {
       return error;
     }
   }
+
+
+
 async setLeverage(symbol:string,leverage:number){
   let fecha = new Date();
   let balance = { walletBalance: 0, marginBalance: 0 };
@@ -48,18 +51,39 @@ async setLeverage(symbol:string,leverage:number){
   this.webClient.setSSLCertMode("nocheck");
   try {
     let myd = await this.webClient.post(url, params2, header);
-    console.log("Ya paso leverageeeeee");
-  
-    console.log(JSON.parse(myd.data));
     return myd;
   } 
   catch (error) {
-    console.log("error en llamada", JSON.stringify(error));
-    console.log("HD REQ:",error)
     return error;
   }
-
 }
+
+async getPositions(symbol:string,leverage:number){
+  let fecha = new Date();
+  let balance = { walletBalance: 0, marginBalance: 0 };
+  let nonce = fecha.getTime() * 100 + fecha.getMilliseconds();
+  var shaObj = new jsSHA("SHA-256", "TEXT");
+  shaObj.setHMACKey(this.secret, "TEXT");
+  //let params2 = { 'leverage': leverage,'symbol': symbol   };
+  //let params = "leverage=" + leverage.toPrecision()+"&symbol=" + symbol   ;
+  shaObj.update("POST/api/v1/position" + nonce.toString() );
+  var hmac = shaObj.getHMAC("HEX");
+  let header = { 'accept-charset'	:'UTF-8','content-type':'application/x-www-form-urlencoded; charset=UTF-8', 'api-signature': hmac, 'api-key': this.id, 'api-nonce': nonce.toString(), 'Connection': 'Keep-Alive', 'Keep-Alive': '90','user-agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36' };
+  let url = 'https://testnet.bitmex.com/api/v1/position';
+  this.webClient.setSSLCertMode("nocheck");
+  try {
+    let myd = await this.webClient.get(url, {}, header);
+    console.log("Positions:",myd);
+    return myd;
+  } 
+  catch (error) {
+    return error;
+  }
+}
+
+
+
+
   async CreateOrder(symbol: string, type: string, side: string, price: number, quantity: number) {
     await this.setLeverage(symbol,this.leverage);
     let fecha = new Date();

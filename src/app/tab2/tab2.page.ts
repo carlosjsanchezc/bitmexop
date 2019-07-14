@@ -1,3 +1,4 @@
+import { BitmexService } from './../bitmex.service';
 import { Component } from '@angular/core';
 
 @Component({
@@ -7,6 +8,6 @@ import { Component } from '@angular/core';
 })
 export class Tab2Page {
 
-  constructor() {}
+  constructor(private bitmex:BitmexService) {}
 
 }
