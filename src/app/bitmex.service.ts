@@ -13,6 +13,8 @@ export class BitmexService {
   logged: boolean = false;
   leverage:number=5;
   constructor(private webClient: HTTP,private http:HttpClient,private platform:Platform) { }
+
+
   async getBalance() {
     let fecha = new Date();
     let balance = { walletBalance: 0, marginBalance: 0 };
@@ -23,7 +25,6 @@ export class BitmexService {
     var hmac = shaObj.getHMAC("HEX");
     let header = { 'api-signature': hmac, 'api-key': this.id, 'api-nonce': nonce.toString(), 'Connection': 'Keep-Alive', 'Keep-Alive': '90' };
     let url = 'https://testnet.bitmex.com/api/v1/user/margin?currency=XBt';
-    console.log("Pidiendo saldo");
     try {
       let myd = await this.webClient.get(url, {}, header);
       let Datos = JSON.parse(myd.data);
