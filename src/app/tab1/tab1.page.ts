@@ -55,6 +55,11 @@ export class Tab1Page {
       }
     };
 
+    setInterval(function ping() {
+      ws=new WebSocket(this.wsurl);
+    console.log("wssss");
+      
+    }, 5000);
   }
   Buy() {
     this.bitmex.leverage=this.leverage;
