@@ -20,19 +20,12 @@ export class AppComponent {
   }
 
   initializeApp() {
-    this.platform.ready().then(() => {
+    this.platform.ready().then(async () => {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
-
-      this.storage.get('id').then((val) => {
-        this.bitmex.id=val;
-
-      });
+      this.bitmex.id=await this.storage.get('id');
+      this.bitmex.secret=await this.storage.get('secret');
       
-      this.storage.get('secret').then((val2) => {
-        this.bitmex.secret=val2;
-        
-      });
     });
   }
 }

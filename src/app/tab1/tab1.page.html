@@ -1,93 +1,101 @@
 <ion-header>
-  <ion-toolbar color="primary">
-    <ion-title>
-      Place Order
-    </ion-title>
-  </ion-toolbar>
+	<ion-toolbar color="primary">
+		<ion-title>
+			Place Order
+		</ion-title>
+	</ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-img src="https://www.bitmex.com/img/bitmex-logo-v2-alt-white.png"></ion-img>
+	<ion-img src="https://www.bitmex.com/img/bitmex-logo-v2-alt-white.png"></ion-img>
 
-  <ion-item color="secondary">
-    <ion-grid fixed>
-      <ion-row>
-        <ion-col size="3">
-          XBTUSD
+	<ion-item color="secondary">
+		<ion-grid fixed>
+			<ion-row>
+				<ion-col size="3">
+					XBTUSD
 
-        </ion-col>
-        <ion-col size="2">
-          ETHUSD
+				</ion-col>
+				<ion-col size="2">
+					ETHUSD
 
-        </ion-col>
-        <ion-col size="3">
-          LTCU19
+				</ion-col>
+				<ion-col size="3">
+					LTCU19
 
-        </ion-col>
-        <ion-col size="4">
-          XRPU19
+				</ion-col>
+				<ion-col size="4">
+					XRPU19
 
-        </ion-col>
-      </ion-row>
-      <ion-row>
-        <ion-col size="3">
-          <ion-badge color="primary" mode="ios">{{xbtusd.toLocaleString()}}</ion-badge>
-        </ion-col>
-        <ion-col size="2">
-          <ion-badge color="primary" mode="ios">{{ethusd}}</ion-badge>
-        </ion-col>
-        <ion-col size="3">
-          <ion-badge color="primary" mode="ios">{{ltcu19}}</ion-badge>
-        </ion-col>
-        <ion-col size="4">
-          <ion-badge color="primary" mode="ios">{{xrpu19}}</ion-badge>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-  </ion-item>
-  <ion-card color="secondary">
-    <ion-card-header color="primary">
-      <ion-card-subtitle>Place Order</ion-card-subtitle>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-item>
-        <ion-label>Pair</ion-label>
-        <ion-select placeholder="Symbol" interface="popover" [(ngModel)]="symbol">
-          <ion-select-option value="XBTUSD">XBTUSD</ion-select-option>
-          <ion-select-option value="ETHUSD">ETHUSD</ion-select-option>
-        </ion-select>
-      </ion-item>
-      <ion-item>
-        <ion-label>Type</ion-label>
-        <ion-select placeholder="Select Order Type" interface="popover" [(ngModel)]="type">
-          <ion-select-option value="Limit">Limit</ion-select-option>
-          <ion-select-option value="Market">Market</ion-select-option>
-          <ion-select-option value="Stop Market">Stop Market</ion-select-option>
-        </ion-select>
-      </ion-item>
-      <ion-item>
-        <ion-label>Leverage</ion-label>
-        <ion-input type="number" [(ngModel)]="leverage" class="ion-text-right"></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-label>Quantity</ion-label>
-        <ion-input type="number" class="ion-text-right" [(ngModel)]="quantity"></ion-input>
-      </ion-item>
-      <ion-item *ngIf="type=='Limit'">
-        <ion-label>Price</ion-label>
-        <ion-input type="number" class="ion-text-right" [(ngModel)]="price"></ion-input>
-      </ion-item>
-      <ion-row>
-        <ion-col size="6">
-          <ion-button expand="block" (click)="Buy()" color="success">
-            Buy/Long </ion-button>
-        </ion-col>
-        <ion-col size="6">
-          <ion-button expand="block" (click)="Sell()" color="danger">
-            Sell/Short
-          </ion-button>
-        </ion-col>
-      </ion-row>
-    </ion-card-content>
-  </ion-card>
+				</ion-col>
+			</ion-row>
+			<ion-row>
+				<ion-col size="3">
+					<ion-badge color="primary" mode="ios">{{xbtusd.toLocaleString()}}</ion-badge>
+				</ion-col>
+				<ion-col size="2">
+					<ion-badge color="primary" mode="ios">{{ethusd}}</ion-badge>
+				</ion-col>
+				<ion-col size="3">
+					<ion-badge color="primary" mode="ios">{{ltcu19}}</ion-badge>
+				</ion-col>
+				<ion-col size="4">
+					<ion-badge color="primary" mode="ios">{{xrpu19}}</ion-badge>
+				</ion-col>
+			</ion-row>
+		</ion-grid>
+	</ion-item>
+	<ion-card color="secondary">
+		<ion-card-header color="primary">
+			<ion-card-subtitle>Place Order</ion-card-subtitle>
+		</ion-card-header>
+		<ion-card-content>
+			<ion-item>
+				<ion-label>Pair</ion-label>
+				<ion-select placeholder="Symbol" interface="popover" [(ngModel)]="symbol">
+					<ion-select-option value="XBTUSD">XBTUSD</ion-select-option>
+					<ion-select-option value="ETHUSD">ETHUSD</ion-select-option>
+				</ion-select>
+			</ion-item>
+			<ion-item>
+				<ion-label>Type</ion-label>
+				<ion-select placeholder="Select Order Type" interface="popover" [(ngModel)]="type">
+					<ion-select-option value="Limit">Limit</ion-select-option>
+					<ion-select-option value="Market">Market</ion-select-option>
+					<ion-select-option value="Stop Market">Stop Market</ion-select-option>
+				</ion-select>
+			</ion-item>
+			<ion-item>
+				<ion-label>Leverage</ion-label>
+				<ion-input type="number" [(ngModel)]="leverage" pattern="[0-9].*"  class="ion-text-right"></ion-input>
+			</ion-item>
+			<ion-item>
+				<ion-label>Quantity</ion-label>
+				<ion-input type="number" class="ion-text-right" pattern="[0-9].*" [(ngModel)]="quantity"></ion-input>
+			</ion-item>
+			<ion-item *ngIf="type=='Limit'">
+				<ion-label>Price</ion-label>
+				<ion-input type="number" class="ion-text-right" pattern="[0-9]*.d"  [(ngModel)]="price"></ion-input>
+			</ion-item>
+			<ion-item >
+				<ion-label>Stop Loss</ion-label>
+				<ion-input type="number" class="ion-text-right" pattern="[0-9]*"  [(ngModel)]="sl"></ion-input>
+			</ion-item>
+			<ion-item>
+				<ion-label>Take Profit</ion-label>
+				<ion-input type="number" class="ion-text-right" pattern="[0-9]*"  [(ngModel)]="tp"></ion-input>
+			</ion-item>
+			<ion-row>
+				<ion-col size="6">
+					<ion-button expand="block" (click)="Buy()" color="success">
+						Buy/Long </ion-button>
+				</ion-col>
+				<ion-col size="6">
+					<ion-button expand="block" (click)="Sell()" color="danger">
+						Sell/Short
+					</ion-button>
+				</ion-col>
+			</ion-row>
+		</ion-card-content>
+	</ion-card>
 </ion-content>

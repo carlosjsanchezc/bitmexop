@@ -158,6 +158,58 @@ async getActiveOrders(symbol:string){
       return error;
     }
   }
+
+
+  async SetStopLoss(symbol: string,  side: string, price: number, quantity: number) {
+    let fecha = new Date();
+    let type="MarketIfTouched";
+    let balance = { walletBalance: 0, marginBalance: 0 };
+    let nonce = fecha.getTime() * 100 + fecha.getMilliseconds();
+    //nonce=156300766566963;
+    var shaObj = new jsSHA("SHA-256", "TEXT");
+
+    shaObj.setHMACKey(this.secret, "TEXT");
+    console.log("Plataforma:",this.platform.platforms());
+    let params = "symbol=" + symbol + "&side=" + side + "&orderQty=" + quantity.toString() + "&ordType=" + type+"&stopPx="+price.toString();
+    let params2 = { 'symbol': symbol, 'side': side, 'orderQty': quantity, 'ordType': type, 'stopPx':price };
+
+    if (this.platform.is("ios")){
+      params2 = { 'ordType': type ,'orderQty': quantity,'side': side,'symbol': symbol ,'stopPx':price  };
+      params = "ordType=" + type+"&orderQty=" + quantity.toString()+ "&side=" + side +"&symbol=" + symbol+"&stopPx="+price.toString();   ;
+    }
+
+  
+    
+    shaObj.update("POST/api/v1/order" + nonce.toString() + params);
+    var hmac = shaObj.getHMAC("HEX");
+    let header = { 'accept-charset'	:'UTF-8','content-type':'application/x-www-form-urlencoded; charset=UTF-8', 'api-signature': hmac, 'api-key': this.id, 'api-nonce': nonce.toString(), 'Connection': 'Keep-Alive', 'Keep-Alive': '90','user-agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36' };
+    console.log("Serializer:", this.webClient.getDataSerializer());
+    //this.webClient.setDataSerializer("json");
+    //this.webClient.se
+    let url = 'https://testnet.bitmex.com/api/v1/order';
+    console.log("api-signature:",hmac);
+    console.log("api-key:",this.id);
+    console.log("api-nonce:",nonce);
+    console.log("Params:", params);
+    console.log("Params2:", JSON.stringify(params2));
+    console.log("Headers:", JSON.stringify(header));
+    console.log("Encryptado:", "POST/api/v1/order" + nonce.toString() + params)
+    console.log("Secret:", this.secret);
+    this.webClient.setSSLCertMode("nocheck");
+    //this.webClient.setSSLCertMode("legacy");
+    try {
+      let myd = await this.webClient.post(url, params2, header);
+      console.log("Ya paso");
+      console.log("myd");
+      console.log(myd);
+      return myd;
+    } 
+    catch (error) {
+      console.log("error en llamada", JSON.stringify(error));
+      console.log("HD REQ:",error)
+      return error;
+    }
+  }
   /*
 ID:	
 LHy6MoqSreBWl3NxKE3dQdN3
