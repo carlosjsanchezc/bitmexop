@@ -79,10 +79,14 @@
 			</ion-item>
 			<ion-item >
 				<ion-label>Stop Loss</ion-label>
+
+					<ion-checkbox slot="end" [(ngModel)]="bsl"></ion-checkbox>
 				<ion-input type="number" class="ion-text-right" pattern="[0-9]*"  [(ngModel)]="sl"></ion-input>
 			</ion-item>
 			<ion-item>
 				<ion-label>Take Profit</ion-label>
+				<ion-checkbox slot="end" [(ngModel)]="btp"></ion-checkbox>
+	
 				<ion-input type="number" class="ion-text-right" pattern="[0-9]*"  [(ngModel)]="tp"></ion-input>
 			</ion-item>
 			<ion-row>

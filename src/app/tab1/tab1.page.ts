@@ -20,7 +20,8 @@ export class Tab1Page {
   xrpu19: number = 0;
   sl: number = 0;
   tp: number = 0;
-  
+  bsl:boolean=false;
+  btp:boolean=false;
   quantity: number = 1000;
   wsurl: string = "wss://testnet.bitmex.com/realtime?subscribe=instrument";
   ws = new WebSocket(this.wsurl);
@@ -30,7 +31,9 @@ export class Tab1Page {
     let xbtusd = 0;
 
   }
+  
   ionViewDidEnter(){
+    
     this.ws.onerror = (e) => {
       console.log("Estamos en error");
       this.ws.send("ping");
@@ -75,16 +78,25 @@ export class Tab1Page {
   Buy() {
     this.bitmex.leverage = this.leverage;
     this.bitmex.CreateOrder(this.symbol, this.type, "Buy", this.price, this.quantity).then(data => {
+      if (this.bsl||this.sl<this.price){
+        
+        this.bitmex.SetStopLoss(this.symbol,"Buy",this.sl,this.quantity);
+      }
     });
-    if (this.sl)
+    
     // wss=new WebSocket("wss://testnet.bitmex.com/realtime?subscribe=instrument,orderBook:XBTUSD");
     //wss.dispatchEvent(event)
 
   }
   Sell() {
     this.bitmex.leverage = this.leverage;
-    this.bitmex.CreateOrder(this.symbol, this.type, "Sell", this.price, this.quantity).then(data => {
-    });
+    this.bitmex.SetStopLoss(this.symbol,"Sell",this.sl,this.quantity);
+   /* this.bitmex.CreateOrder(this.symbol, this.type, "Sell", this.price, this.quantity).then(data => {
+      if (this.bsl&&this.sl>this.price){
+        
+        this.bitmex.SetStopLoss(this.symbol,"Sell",this.sl,this.quantity);
+      }
+    });/*/
 
 
   }

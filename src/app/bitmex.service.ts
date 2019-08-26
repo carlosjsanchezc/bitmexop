@@ -170,12 +170,12 @@ async getActiveOrders(symbol:string){
 
     shaObj.setHMACKey(this.secret, "TEXT");
     console.log("Plataforma:",this.platform.platforms());
-    let params = "symbol=" + symbol + "&side=" + side + "&orderQty=" + quantity.toString() + "&ordType=" + type+"&stopPx="+price.toString();
-    let params2 = { 'symbol': symbol, 'side': side, 'orderQty': quantity, 'ordType': type, 'stopPx':price };
+    let params = "symbol=" + symbol + "&side=" + side + "&orderQty=" + quantity.toString() + "&ordType=" + type+"&stopPx="+price.toString()+"$price="+price.toString();
+    let params2 = { 'symbol': symbol, 'side': side, 'orderQty': quantity, 'ordType': type, 'stopPx':price,'price':price };
 
     if (this.platform.is("ios")){
-      params2 = { 'ordType': type ,'orderQty': quantity,'side': side,'symbol': symbol ,'stopPx':price  };
-      params = "ordType=" + type+"&orderQty=" + quantity.toString()+ "&side=" + side +"&symbol=" + symbol+"&stopPx="+price.toString();   ;
+      params2 = { 'ordType': type ,'orderQty': quantity,'side': side,'symbol': symbol ,'stopPx':price, 'price':price };
+      params = "ordType=" + type+"&orderQty=" + quantity.toString()+ "&side=" + side +"&symbol=" + symbol+"&stopPx="+price.toString()+"$price="+price.toString();   ;
     }
 
   
