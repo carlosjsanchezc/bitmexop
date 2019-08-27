@@ -88,16 +88,14 @@ export class Tab1Page {
     //wss.dispatchEvent(event)
 
   }
-  Sell() {
+  async  Sell() {
     this.bitmex.leverage = this.leverage;
-    this.bitmex.SetStopLoss(this.symbol,"Sell",this.sl,this.quantity);
-   /* this.bitmex.CreateOrder(this.symbol, this.type, "Sell", this.price, this.quantity).then(data => {
-      if (this.bsl&&this.sl>this.price){
-        
-        this.bitmex.SetStopLoss(this.symbol,"Sell",this.sl,this.quantity);
-      }
-    });/*/
-
+    //this.bitmex.SetStopLoss(this.symbol,"Sell",this.sl,this.quantity);
+     await this.bitmex.CreateOrder(this.symbol, this.type, "Sell", this.price, this.quantity)    ;
+     await this.bitmex.CreateOrder(this.symbol, "Stop", "Buy", this.sl, this.quantity);
+     await this.bitmex.CreateOrder(this.symbol, "LimitIfTouched", "Sell", this.tp, this.quantity);
+     
+     
 
   }
 }

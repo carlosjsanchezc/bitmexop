@@ -8,7 +8,7 @@ import jsSHA from 'jssha';
   providedIn: 'root'
 })
 export class BitmexService {
- // id: string='LHy6MoqSreBWl3NxKE3dQdN3';
+  //id: string='LHy6MoqSreBWl3NxKE3dQdN3';
   //secret: string='bCKND8pl_-I89v5yHuKgMa8fjy9E4FZVUPUvtDC4UMhRCq-j';
   id: string;
   secret: string;
@@ -17,7 +17,10 @@ export class BitmexService {
   leverage:number=5;
   constructor(private webClient: HTTP,private http:HttpClient,private platform:Platform) { }
 
-
+ionViewWillEnter(){
+  this.id='LHy6MoqSreBWl3NxKE3dQdN3';
+  this.secret='bCKND8pl_-I89v5yHuKgMa8fjy9E4FZVUPUvtDC4UMhRCq-j';
+}
   async getBalance() {
     let fecha = new Date();
     let balance = { walletBalance: 0, marginBalance: 0 };
@@ -110,20 +113,97 @@ async getActiveOrders(symbol:string){
 
   async CreateOrder(symbol: string, type: string, side: string, price: number, quantity: number) {
     await this.setLeverage(symbol,this.leverage);
+    let priceStop=price;
+
     let fecha = new Date();
     let balance = { walletBalance: 0, marginBalance: 0 };
     let nonce = fecha.getTime() * 100 + fecha.getMilliseconds();
     //nonce=156300766566963;
     var shaObj = new jsSHA("SHA-256", "TEXT");
+    let params = "symbol=" + symbol + "&side=" + side + "&orderQty=" + quantity.toString() + "&ordType=" + type+"&stopPx="+priceStop.toString();
+    let params2 = { 'symbol': symbol, 'side': side, 'orderQty': quantity, 'ordType': type };
 
     shaObj.setHMACKey(this.secret, "TEXT");
     console.log("Plataforma:",this.platform.platforms());
-    let params = "symbol=" + symbol + "&side=" + side + "&orderQty=" + quantity.toString() + "&ordType=" + type;
-    let params2 = { 'symbol': symbol, 'side': side, 'orderQty': quantity, 'ordType': type };
-
-    if (this.platform.is("ios")){
-      params2 = { 'ordType': type ,'orderQty': quantity,'side': side,'symbol': symbol   };
-      params = "ordType=" + type+"&orderQty=" + quantity.toString()+ "&side=" + side +"&symbol=" + symbol   ;
+    switch (type) {
+      case "Market":
+        params = "symbol=" + symbol + "&side=" + side + "&orderQty=" + quantity.toString() + "&ordType=" + type;
+        params2['symbol']=symbol;
+        params2['side']=side;
+        params2['orderQty']=quantity;
+        params2['ordType']=type;
+        
+        //params2 = { 'symbol': symbol, 'side': side, 'orderQty': quantity, 'ordType': type,'stopPx':priceStop };
+    
+        if (this.platform.is("ios")){
+          params2['symbol']=symbol;
+          params2['side']=side;
+          params2['orderQty']=quantity;
+          params2['ordType']=type;
+          //params2 = { 'ordType': type ,'orderQty': quantity,'side': side,'symbol': symbol ,'stopPx':priceStop  };
+          params = "ordType=" + type+"&orderQty=" + quantity.toString()+ "&side=" + side +"&symbol=" + symbol  ;
+        }
+    
+        break;
+        case "Stop":
+            params = "symbol=" + symbol + "&side=" + side + "&orderQty=" + quantity.toString() + "&ordType=" + type+"&stopPx="+price.toString() ;
+            params2['symbol']=symbol;
+            params2['side']=side;
+            params2['orderQty']=quantity;
+            params2['ordType']=type;
+            params2['stopPx']=price;
+            //params2 = { 'symbol': symbol, 'side': side, 'orderQty': quantity, 'ordType': type };
+        
+            if (this.platform.is("ios")){
+              //params2 = { 'ordType': type ,'orderQty': quantity,'side': side,'symbol': symbol  };
+              params2['symbol']=symbol;
+              params2['side']=side;
+              params2['orderQty']=quantity;
+              params2['ordType']=type;
+              params = "ordType=" + type+"&orderQty=" + quantity.toString()+ "&side=" + side +"&symbol=" + symbol +"&stopPx="+price.toString()  ;
+            }
+        
+        break;
+        case "MarketIfTouched":
+            params = "symbol=" + symbol + "&side=" + side + "&orderQty=" + quantity.toString() + "&ordType=" + type+"&price="+price.toString() ;
+            params2['symbol']=symbol;
+            params2['side']=side;
+            params2['orderQty']=quantity;
+            params2['ordType']=type;
+            params2['stopPx']=price;
+            //params2 = { 'symbol': symbol, 'side': side, 'orderQty': quantity, 'ordType': type };
+        
+            if (this.platform.is("ios")){
+              //params2 = { 'ordType': type ,'orderQty': quantity,'side': side,'symbol': symbol  };
+              params2['symbol']=symbol;
+              params2['side']=side;
+              params2['orderQty']=quantity;
+              params2['ordType']=type;
+              params = "ordType=" + type+"&orderQty=" + quantity.toString()+ "&side=" + side +"&symbol=" + symbol +"&price="+price.toString()  ;
+            }
+        
+        break;
+        case "LimitIfTouched":
+            params = "symbol=" + symbol + "&side=" + side + "&orderQty=" + quantity.toString() + "&ordType=" + type+"&price="+price.toString() ;
+            params2['symbol']=symbol;
+            params2['side']=side;
+            params2['orderQty']=quantity;
+            params2['ordType']=type;
+            params2['stopPx']=price;
+            //params2 = { 'symbol': symbol, 'side': side, 'orderQty': quantity, 'ordType': type };
+        
+            if (this.platform.is("ios")){
+              //params2 = { 'ordType': type ,'orderQty': quantity,'side': side,'symbol': symbol  };
+              params2['symbol']=symbol;
+              params2['side']=side;
+              params2['orderQty']=quantity;
+              params2['ordType']=type;
+              params = "ordType=" + type+"&orderQty=" + quantity.toString()+ "&side=" + side +"&symbol=" + symbol +"&price="+price.toString()  ;
+            }
+        
+        break;
+      default:
+        break;
     }
 
   
@@ -162,7 +242,7 @@ async getActiveOrders(symbol:string){
 
   async SetStopLoss(symbol: string,  side: string, price: number, quantity: number) {
     let fecha = new Date();
-    let type="MarketIfTouched";
+    let type="Stop";
     let balance = { walletBalance: 0, marginBalance: 0 };
     let nonce = fecha.getTime() * 100 + fecha.getMilliseconds();
     //nonce=156300766566963;
@@ -170,12 +250,25 @@ async getActiveOrders(symbol:string){
 
     shaObj.setHMACKey(this.secret, "TEXT");
     console.log("Plataforma:",this.platform.platforms());
-    let params = "symbol=" + symbol + "&side=" + side + "&orderQty=" + quantity.toString() + "&ordType=" + type+"&stopPx="+price.toString()+"$price="+price.toString();
-    let params2 = { 'symbol': symbol, 'side': side, 'orderQty': quantity, 'ordType': type, 'stopPx':price,'price':price };
+    /*$symbol = self::SYMBOL;
+    $data['method'] = "POST";
+    $data['function'] = "order";
+    $data['params'] = array(
+        "symbol" => $symbol,
+        "side" => $side,
+        "price" => $price,
+        "orderQty" => $quantity,
+        "ordType" => $type,
+        "stopPx"=> $stoppx,
+        "execInst"=>'LastPrice'*/
+
+
+    let params = "symbol=" + symbol + "&side=" + side+"&price="+price.toString() + "&orderQty=" + quantity.toString() + "&ordType=" + type+"&stopPx="+price.toString()+"&execInst=LastPrice";
+    let params2 = { 'symbol': symbol, 'side': side,'price':price, 'orderQty': quantity, 'ordType': type, 'stopPx':price,'execInst':'LastPrice' };
 
     if (this.platform.is("ios")){
-      params2 = { 'ordType': type ,'orderQty': quantity,'side': side,'symbol': symbol ,'stopPx':price, 'price':price };
-      params = "ordType=" + type+"&orderQty=" + quantity.toString()+ "&side=" + side +"&symbol=" + symbol+"&stopPx="+price.toString()+"$price="+price.toString();   ;
+      params2 = { 'ordType': type ,'orderQty': quantity,'side': side,'symbol': symbol ,'stopPx':price, 'price':price,'execInst':'LastPrice' };
+      params = "ordType=" + type+"&price="+price.toString()+"&orderQty=" + quantity.toString()+ "&side=" + side +"&symbol=" + symbol+"&stopPx="+price.toString()+"&execInst=LastPrice";   ;
     }
 
   
@@ -206,7 +299,7 @@ async getActiveOrders(symbol:string){
     } 
     catch (error) {
       console.log("error en llamada", JSON.stringify(error));
-      console.log("HD REQ:",error)
+      console.log("HD REQ2:",error)
       return error;
     }
   }
