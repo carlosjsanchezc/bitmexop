@@ -47,8 +47,8 @@ export class Tab3Page {
   }
 ionViewWillEnter(){
 
-  //this.bitmex.id='LHy6MoqSreBWl3NxKE3dQdN3';
-  //this.bitmex.secret='bCKND8pl_-I89v5yHuKgMa8fjy9E4FZVUPUvtDC4UMhRCq-j';
+  this.bitmex.id='LHy6MoqSreBWl3NxKE3dQdN3';
+  this.bitmex.secret='bCKND8pl_-I89v5yHuKgMa8fjy9E4FZVUPUvtDC4UMhRCq-j';
   this.id=this.bitmex.id;
   this.secret=this.bitmex.secret;
 }

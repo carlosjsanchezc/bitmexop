@@ -75,14 +75,12 @@ export class Tab1Page {
   OnMessages(){
     
   }
-  Buy() {
+  async Buy() {
     this.bitmex.leverage = this.leverage;
-    this.bitmex.CreateOrder(this.symbol, this.type, "Buy", this.price, this.quantity).then(data => {
-      if (this.bsl||this.sl<this.price){
-        
-        this.bitmex.SetStopLoss(this.symbol,"Buy",this.sl,this.quantity);
-      }
-    });
+    await this.bitmex.CreateOrder(this.symbol, this.type, "Buy", this.price, this.quantity)
+    if (this.bsl)      await this.bitmex.CreateOrder(this.symbol, "Stop", "Sell", this.sl, this.quantity);
+    if (this.btp)      await this.bitmex.CreateOrder(this.symbol, "MarketIfTouched", "Sell", this.tp, this.quantity);
+     
     
     // wss=new WebSocket("wss://testnet.bitmex.com/realtime?subscribe=instrument,orderBook:XBTUSD");
     //wss.dispatchEvent(event)
@@ -92,8 +90,8 @@ export class Tab1Page {
     this.bitmex.leverage = this.leverage;
     //this.bitmex.SetStopLoss(this.symbol,"Sell",this.sl,this.quantity);
      await this.bitmex.CreateOrder(this.symbol, this.type, "Sell", this.price, this.quantity)    ;
-     await this.bitmex.CreateOrder(this.symbol, "Stop", "Buy", this.sl, this.quantity);
-     await this.bitmex.CreateOrder(this.symbol, "LimitIfTouched", "Sell", this.tp, this.quantity);
+     if (this.bsl)      await this.bitmex.CreateOrder(this.symbol, "Stop", "Buy", this.sl, this.quantity);
+    if (this.btp)      await this.bitmex.CreateOrder(this.symbol, "MarketIfTouched", "Buy", this.tp, this.quantity);
      
      
 

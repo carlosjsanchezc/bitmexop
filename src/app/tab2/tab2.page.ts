@@ -7,7 +7,8 @@ import { Component } from '@angular/core';
   styleUrls: ['tab2.page.scss']
 })
 export class Tab2Page {
-  positions:any;
+  positions:any[];
+  activeorders:any=[];
   constructor(private bitmex:BitmexService) {
     this.positions=[];
 
@@ -25,6 +26,11 @@ export class Tab2Page {
 
     let c=await this.bitmex.getPositions("XBTUSD");
     this.positions=JSON.parse(c.data);
+    let d=await this.bitmex.getActiveOrders("XBTUSD");
+    console.log("Ordenes activas:",d);
+    //this.activeorders=JSON.parse(d);
+    console.log("Ordenes Activas:",this.activeorders);
+
   }
 
 }
