@@ -20,8 +20,8 @@ export class Tab1Page {
   xrpu19: number = 0;
   sl: number = 0;
   tp: number = 0;
-  bsl:boolean=false;
-  btp:boolean=false;
+  bsl:boolean=true;
+  btp:boolean=true;
   quantity: number = 1000;
   wsurl: string = "wss://testnet.bitmex.com/realtime?subscribe=instrument";
   ws = new WebSocket(this.wsurl);
@@ -89,9 +89,10 @@ export class Tab1Page {
   async  Sell() {
     this.bitmex.leverage = this.leverage;
     //this.bitmex.SetStopLoss(this.symbol,"Sell",this.sl,this.quantity);
+    console.log("Sl",this.bsl);
      await this.bitmex.CreateOrder(this.symbol, this.type, "Sell", this.price, this.quantity)    ;
-     if (this.bsl)      await this.bitmex.CreateOrder(this.symbol, "Stop", "Buy", this.sl, this.quantity);
-    if (this.btp)      await this.bitmex.CreateOrder(this.symbol, "MarketIfTouched", "Buy", this.tp, this.quantity);
+     if (this.bsl==true)      await this.bitmex.CreateOrder(this.symbol, "Stop", "Buy", this.sl, this.quantity);
+    if (this.btp==true)      await this.bitmex.CreateOrder(this.symbol, "MarketIfTouched", "Buy", this.tp, this.quantity);
      
      
 

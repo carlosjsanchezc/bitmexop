@@ -144,21 +144,27 @@ async getActiveOrders(symbol:string){
     
         break;
         case "Stop":
-            params = "symbol=" + symbol + "&side=" + side + "&orderQty=" + quantity.toString() + "&ordType=" + type+"&stopPx="+price.toString() ;
-            params2['symbol']=symbol;
-            params2['side']=side;
-            params2['orderQty']=quantity;
-            params2['ordType']=type;
-            params2['stopPx']=price;
             //params2 = { 'symbol': symbol, 'side': side, 'orderQty': quantity, 'ordType': type };
         
             if (this.platform.is("ios")){
               //params2 = { 'ordType': type ,'orderQty': quantity,'side': side,'symbol': symbol  };
+              params2['stopPx']=price;
+              params2['ordType']=type;
+              params2['orderQty']=quantity;
+              params2['side']=side;
+              params2['symbol']=symbol;
+           
+              params = "ordType=" + type+"&orderQty=" + quantity.toString()+ "&side=" + side +"&symbol=" + symbol+"&stopPx="+price.toString()  ;
+            }
+            else{
+
+              params = "symbol=" + symbol + "&side=" + side + "&orderQty=" + quantity.toString() + "&ordType=" + type+"&stopPx="+price.toString() ;
               params2['symbol']=symbol;
               params2['side']=side;
               params2['orderQty']=quantity;
               params2['ordType']=type;
-              params = "ordType=" + type+"&orderQty=" + quantity.toString()+ "&side=" + side +"&symbol=" + symbol +"&stopPx="+price.toString()  ;
+              params2['stopPx']=price;
+             
             }
         
         break;
