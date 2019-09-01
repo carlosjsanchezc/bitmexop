@@ -9,10 +9,13 @@ import { Component } from '@angular/core';
 export class Tab2Page {
   positions:any[];
   activeorders:any=[];
+  activeordersethusd:any=[];
+  
   mensaje:string="";
   resp1:string;
   busy1:boolean=false;
   busy2:boolean=false;
+  symbol:string="XBTUSD";
   constructor(private bitmex:BitmexService) {
     this.positions=[];
 
@@ -57,7 +60,11 @@ export class Tab2Page {
     console.log("Ordenes activas:",d.data);
     this.activeorders=JSON.parse(d);
     //console.log("Ordenes Activas:",this.activeorders);
-
+    let e=await this.bitmex.getActiveOrders("ETHUSD");
+    this.busy2=false;
+    console.log("Posiciones:",c.data);
+    console.log("Ordenes activas:",d.data);
+    this.activeordersethusd=JSON.parse(e);
   }
 
 }
