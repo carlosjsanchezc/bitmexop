@@ -21,7 +21,12 @@ export class Tab2Page {
    }, 1500000);
   }
 
-
+  async DeleteOrder(orderId){
+  console.log("borrar:",orderId);
+  
+  await this.bitmex.delOrder(orderId);
+  this.ionViewWillEnter();
+}
   async ionViewWillEnter(){
    
     
@@ -29,9 +34,9 @@ export class Tab2Page {
     let c=await this.bitmex.getPositions("XBTUSD");
     this.positions=JSON.parse(c.data);
     let d=await this.bitmex.getActiveOrders("XBTUSD");
-    this.resp1=JSON.stringify(d);
+  
         //console.log("Ordenes activas:",d.data);
-    //this.activeorders=JSON.parse(d);
+    this.activeorders=JSON.parse(d);
     //console.log("Ordenes Activas:",this.activeorders);
 
   }

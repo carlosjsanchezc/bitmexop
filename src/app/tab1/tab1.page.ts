@@ -3,6 +3,7 @@ import { RealtimeService } from './../realtime.service';
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { isUndefined } from 'util';
+import { ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-tab1',
@@ -12,12 +13,14 @@ import { isUndefined } from 'util';
 export class Tab1Page {
 
   symbol: string = "XBTUSD";
+  busy:boolean=false;
   type: string = "Market";
   price: number = 0;
   xbtusd: number = 0;
   ethusd: number = 0;
   ltcu19: number = 0;
   xrpu19: number = 0;
+  preciosymbol=0;
   sl: number = 0;
   tp: number = 0;
   bsl:boolean=true;
@@ -31,7 +34,7 @@ export class Tab1Page {
   wsurl: string = "wss://testnet.bitmex.com/realtime?subscribe=instrument";
   ws = new WebSocket(this.wsurl);
   leverage: number = 5;
-  constructor(private http: HttpClient, private bitmex: BitmexService) {
+  constructor(private http: HttpClient, private bitmex: BitmexService,private toastController:ToastController) {
     
     let xbtusd = 0;
 
@@ -81,25 +84,13 @@ export class Tab1Page {
     
   }
   async Buy() {
-    this.bitmex.leverage = this.leverage;
-    await this.bitmex.CreateOrder(this.symbol, this.type, "Buy", this.price, this.quantity)
-    if (this.bsl)      await this.bitmex.CreateOrder(this.symbol, "Stop", "Sell", this.sl, this.quantity);
-    if (this.btp)      await this.bitmex.CreateOrder(this.symbol, "MarketIfTouched", "Sell", this.tp, this.quantity);
-     
-    
-    // wss=new WebSocket("wss://testnet.bitmex.com/realtime?subscribe=instrument,orderBook:XBTUSD");
-    //wss.dispatchEvent(event)
-    //this.params="ordType=Stop"+"&stopPx="+this.sl.toString()+"&orderQty=" + this.quantity.toString()+ "&side=Buy&symbol=" + this.symbol  ;
-      
-
-  }
-  async  Sell() {
+    this.busy=true;
     this.bitmex.leverage = this.leverage;
     this.bitmex.params= this.params;
     this.mensaje1="";
     this.mensaje2="";
     this.mensaje3="";
-     let resppos=await this.bitmex.CreateOrder(this.symbol, this.type, "Sell", this.price, this.quantity)    ;
+     let resppos=await this.bitmex.CreateOrder(this.symbol, this.type, "Buy", this.price, this.quantity)    ;
      if (resppos.status==200){
       //console.log(JSON.stringify(resppos));
       let dataor=JSON.parse(resppos.data);
@@ -114,7 +105,7 @@ export class Tab1Page {
 
      
      if (this.bsl==true)     {
-      let respsl=await this.bitmex.CreateOrder(this.symbol, "Stop", "Buy", this.sl, this.quantity);
+      let respsl=await this.bitmex.CreateOrder(this.symbol, "Stop", "Sell", this.sl, this.quantity);
       if (respsl.status==200){
         let datasl=JSON.parse(respsl.data);
        // console.log("Orden SL creada");
@@ -132,7 +123,7 @@ export class Tab1Page {
      
      if (this.btp==true)  
      {
-      let resptp=await this.bitmex.CreateOrder(this.symbol, "MarketIfTouched", "Buy", this.tp, this.quantity);
+      let resptp=await this.bitmex.CreateOrder(this.symbol, "MarketIfTouched", "Sell", this.tp, this.quantity);
       if (resptp.status==200){
         //console.log(JSON.stringify(resptp));
         let datatp=JSON.parse(resptp.data);
@@ -145,6 +136,104 @@ export class Tab1Page {
        }
      } 
      
+     this.busy=false;
+     
+  
 
+  }
+  validarsltp(){
+    this.preciosymbol=this.xbtusd;
+    if (this.symbol=="ETHUSD") this.preciosymbol=this.ethusd;
+    if ((this.bsl==true)){
+      if (this.sl>this.xbtusd){
+          console.log("Solo short:");
+      }else 
+      {
+          console.log("Solo long");
+      }
+    }
+       
+  }
+  
+
+  async  Sell() {
+    this.busy=true;
+    this.bitmex.leverage = this.leverage;
+    this.bitmex.params= this.params;
+    this.mensaje1="";
+    this.mensaje2="";
+    this.mensaje3="";
+     let resppos=await this.bitmex.CreateOrder(this.symbol, this.type, "Sell", this.price, this.quantity)    ;
+     if (resppos.status==200){
+      //console.log(JSON.stringify(resppos));
+      let dataor=JSON.parse(resppos.data);
+      //console.log("Orden creada",resppos.data);
+      this.mensaje1="Orden creada: "+dataor['orderID'];
+      this.presentToast(this.mensaje1);
+
+      
+     } else{
+      let error=JSON.parse(resppos.error);
+      //console.log("Objeto error:",JSON.stringify(error));
+      this.mensaje1="Error Position: "+error.error.message;
+      this.presentToast(this.mensaje1);
+
+     }
+
+     
+     if (this.bsl==true)     {
+      let respsl=await this.bitmex.CreateOrder(this.symbol, "Stop", "Buy", this.sl, this.quantity);
+      if (respsl.status==200){
+        let datasl=JSON.parse(respsl.data);
+       // console.log("Orden SL creada");
+        
+        this.mensaje2="Orden SL Creada: "+datasl['orderID'];
+        this.presentToast(this.mensaje2);
+      
+
+      }else
+      {
+        let error=JSON.parse(respsl.error);
+         //console.log("Objeto error:",JSON.stringify(error));
+         this.mensaje3="Error orden SL: "+error.error.message;
+         this.presentToast(this.mensaje2);
+      
+      }
+     } 
+     //await this.bitmex.CreateOrder(this.symbol, "Stop", "Buy", this.sl, this.quantity);
+     if (this.btp==true)  
+     {
+      let resptp=await this.bitmex.CreateOrder(this.symbol, "MarketIfTouched", "Buy", this.tp, this.quantity);
+      if (resptp.status==200){
+        //console.log(JSON.stringify(resptp));
+        let datatp=JSON.parse(resptp.data);
+        //console.log("Orden creada",resptp.data);
+        this.mensaje3="Orden creada: "+datatp['orderID'];
+        this.presentToast(this.mensaje3);
+      
+       } else{
+         let error=JSON.parse(resptp.error);
+         //console.log("Objeto error:",JSON.stringify(error));
+         this.mensaje3="Error orden TP: "+error.error.message;
+         this.presentToast(this.mensaje3);
+      
+       }
+     } 
+     
+     this.busy=false;
+
+  }
+  async presentToast(message) {
+    this.toastController.create({
+      message: message,
+      duration: 2000,
+      animated: true,
+      showCloseButton: true,
+      closeButtonText: "OK",
+      cssClass: "my-toast",
+      position: "bottom"
+    }).then((obj) => {
+      obj.present();
+    });
   }
 }

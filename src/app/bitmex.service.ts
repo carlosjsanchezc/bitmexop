@@ -86,13 +86,36 @@ async getPositions(symbol:string){
   }
 }
 
+async delOrder(orderID:string){
+  let fecha = new Date();
+  let balance = { walletBalance: 0, marginBalance: 0 };
+  let nonce = fecha.getTime() * 100 + fecha.getMilliseconds();
+  var shaObj = new jsSHA("SHA-256", "TEXT");
+  shaObj.setHMACKey(this.secret, "TEXT");
+  let params = "orderID=" + orderID   ;
+  shaObj.update("DELETE/api/v1/order?"+params + nonce.toString() );
+  var hmac = shaObj.getHMAC("HEX");
+  let header = { 'accept-charset'	:'UTF-8','content-type':'application/x-www-form-urlencoded; charset=UTF-8', 'api-signature': hmac, 'api-key': this.id, 'api-nonce': nonce.toString(), 'Connection': 'Keep-Alive', 'Keep-Alive': '90','user-agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36' };
+  let url = 'https://testnet.bitmex.com/api/v1/order?'+params;
+  try {
+    let myd = await this.webClient.delete(url, {}, header);
+   // console.log("Tratando de mostrar");
+    console.log(JSON.stringify(myd.data));
+    return myd.data;
+  } 
+  catch (error) {
+    console.log("Hubo error en activeopior");
+    return error;
+  }
+}
+
 async getActiveOrders(symbol:string){
   let fecha = new Date();
   let balance = { walletBalance: 0, marginBalance: 0 };
   let nonce = fecha.getTime() * 100 + fecha.getMilliseconds();
   var shaObj = new jsSHA("SHA-256", "TEXT");
   shaObj.setHMACKey(this.secret, "TEXT");
-  let params2 = { 'symbol': symbol,'reverse':true  ,'filter':"open"};
+  let params2 = { 'symbol': symbol,'reverse':true  ,'filter':{'ordStatus':'New'}};
   let params = "symbol=" + symbol+"&reverse=true"   ;
   shaObj.update("GET/api/v1/order?"+params + nonce.toString() );
   var hmac = shaObj.getHMAC("HEX");
@@ -100,7 +123,7 @@ async getActiveOrders(symbol:string){
   let url = 'https://testnet.bitmex.com/api/v1/order?'+params;
   try {
     let myd = await this.webClient.get(url, {}, header);
-    console.log("Tratando de mostrar");
+   // console.log("Tratando de mostrar");
     //console.log(JSON.stringify(myd.data));
     return myd.data;
   } 
@@ -129,6 +152,32 @@ async getActiveOrders(symbol:string){
     shaObj.setHMACKey(this.secret, "TEXT");
     //console.log("Plataforma:",this.platform.platforms());
     switch (type) {
+      case "Limit":
+          if (this.platform.is("ios")){
+            //params2 = { 'ordType': type ,'orderQty': quantity,'side': side,'symbol': symbol  };
+            params2['symbol']=symbol;
+            params2['side']=side;
+            params2['orderQty']=quantity;
+            params2['price']=price;
+            params2['ordType']=type;
+      
+         
+            params ="ordType=" + type+"&orderQty=" + quantity.toString()+ "&price="+price.toString()+ "&side=" + side +"&symbol=" + symbol  ;
+            //params=this.params;
+          }
+          else{
+
+            params = "symbol=" + symbol + "&side=" + side + "&orderQty=" + quantity.toString() + "&ordType=" + type+"&price="+price.toString() ;
+            params2['symbol']=symbol;
+            params2['side']=side;
+            params2['orderQty']=quantity;
+            params2['ordType']=type;
+            params2['price']=price;
+           
+          }
+          console.log(params);
+          console.log(JSON.stringify(params2));
+        break;
       case "Market":
         params = "symbol=" + symbol + "&side=" + side + "&orderQty=" + quantity.toString() + "&ordType=" + type;
         params2['symbol']=symbol;

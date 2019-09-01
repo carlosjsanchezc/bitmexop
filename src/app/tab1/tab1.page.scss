@@ -15,3 +15,14 @@ ion-content{
 .no-scroll .scroll-content {
   overflow: hidden;
 }
+
+.my-custom-class{
+  --background:#FF4127;
+  --border-color:#852114;
+  --border-radius:1px;
+  --border-style:solid;
+  --border-width:4px;
+  --button-color:#FFDD00;
+  --color:#fff;
+}
+
