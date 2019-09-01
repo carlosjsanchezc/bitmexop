@@ -9,31 +9,32 @@
 			<ion-img src="https://www.bitmex.com/img/bitmex-logo-v2-alt-white.png"></ion-img>
 	   
 		</div>
+		<ion-item color="secondary">
+				<ion-grid fixed>
+					<ion-row>
+						<ion-col size="6" text-center>
+							XBTUSD
+		
+						</ion-col>
+						<ion-col size="6">
+							ETHUSD
+		
+						</ion-col>
+		
+					</ion-row>
+					<ion-row>
+						<ion-col size="6" text-center>
+							<ion-badge color="primary" mode="ios">{{xbtusd.toLocaleString()}}</ion-badge>
+						</ion-col>
+						<ion-col size="6">
+							<ion-badge color="primary" mode="ios">{{ethusd}}</ion-badge>
+						</ion-col>
+					</ion-row>
+				</ion-grid>
+			</ion-item>
 <ion-content>
 	
-	<ion-item color="secondary">
-		<ion-grid fixed>
-			<ion-row>
-				<ion-col size="6">
-					XBTUSD
 
-				</ion-col>
-				<ion-col size="6">
-					ETHUSD
-
-				</ion-col>
-
-			</ion-row>
-			<ion-row>
-				<ion-col size="6">
-					<ion-badge color="primary" mode="ios">{{xbtusd.toLocaleString()}}</ion-badge>
-				</ion-col>
-				<ion-col size="6">
-					<ion-badge color="primary" mode="ios">{{ethusd}}</ion-badge>
-				</ion-col>
-			</ion-row>
-		</ion-grid>
-	</ion-item>
 	<ion-card color="secondary">
 		<ion-card-header color="primary">
 			<ion-card-subtitle>Place Order</ion-card-subtitle>

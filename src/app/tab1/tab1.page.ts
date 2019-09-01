@@ -165,7 +165,7 @@ export class Tab1Page {
     this.preciosymbol=this.xbtusd;
     if (this.symbol=="ETHUSD") this.preciosymbol=this.ethusd;
     if ((this.bsl==true)){
-      if (this.sl>this.xbtusd){
+      if (this.sl>this.preciosymbol){
           console.log("Solo short:");
           this.selldisabled=false;
           this.buydisabled=true;
@@ -178,7 +178,7 @@ export class Tab1Page {
       }
     }
     if ((this.btp==true)){
-      if (this.tp>this.xbtusd){
+      if (this.tp>this.preciosymbol){
           console.log("Solo Long:");
           this.buydisabled=false;
           this.selldisabled=true;
