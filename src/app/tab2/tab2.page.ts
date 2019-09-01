@@ -9,6 +9,8 @@ import { Component } from '@angular/core';
 export class Tab2Page {
   positions:any[];
   activeorders:any=[];
+  mensaje:string="";
+  resp1:string;
   constructor(private bitmex:BitmexService) {
     this.positions=[];
 
@@ -16,7 +18,7 @@ export class Tab2Page {
     console.log(this.positions);
     setInterval(() => { 
       this.ionViewWillEnter(); // Now the "this" still references the component
-   }, 3000);
+   }, 1500000);
   }
 
 
@@ -27,9 +29,10 @@ export class Tab2Page {
     let c=await this.bitmex.getPositions("XBTUSD");
     this.positions=JSON.parse(c.data);
     let d=await this.bitmex.getActiveOrders("XBTUSD");
-    console.log("Ordenes activas:",d);
+    this.resp1=JSON.stringify(d);
+        //console.log("Ordenes activas:",d.data);
     //this.activeorders=JSON.parse(d);
-    console.log("Ordenes Activas:",this.activeorders);
+    //console.log("Ordenes Activas:",this.activeorders);
 
   }
 

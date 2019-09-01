@@ -92,7 +92,7 @@ async getActiveOrders(symbol:string){
   let nonce = fecha.getTime() * 100 + fecha.getMilliseconds();
   var shaObj = new jsSHA("SHA-256", "TEXT");
   shaObj.setHMACKey(this.secret, "TEXT");
-  let params2 = { 'symbol': symbol,'reverse':true   };
+  let params2 = { 'symbol': symbol,'reverse':true  ,'filter':"open"};
   let params = "symbol=" + symbol+"&reverse=true"   ;
   shaObj.update("GET/api/v1/order?"+params + nonce.toString() );
   var hmac = shaObj.getHMAC("HEX");
@@ -100,9 +100,12 @@ async getActiveOrders(symbol:string){
   let url = 'https://testnet.bitmex.com/api/v1/order?'+params;
   try {
     let myd = await this.webClient.get(url, {}, header);
-    return myd;
+    console.log("Tratando de mostrar");
+    //console.log(JSON.stringify(myd.data));
+    return myd.data;
   } 
   catch (error) {
+    console.log("Hubo error en activeopior");
     return error;
   }
 }
@@ -234,7 +237,7 @@ async getActiveOrders(symbol:string){
     /*console.log("api-signature:",hmac);
     console.log("api-key:",this.id);
     console.log("api-nonce:",nonce);*/
-    console.log("Params:", params);
+    /*console.log("Params:", params);
     console.log("Params2:", JSON.stringify(params2));
     console.log("Headers:", JSON.stringify(header));
     /*console.log("Encryptado:", "POST/api/v1/order" + nonce.toString() + params)
@@ -243,9 +246,6 @@ async getActiveOrders(symbol:string){
     //this.webClient.setSSLCertMode("legacy");
     try {
       let myd = await this.webClient.post(url, params2, header);
-      console.log("Ya paso");
-      console.log("myd");
-      console.log(myd);
       return myd;
     } 
     catch (error) {

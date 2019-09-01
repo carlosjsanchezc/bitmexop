@@ -23,6 +23,10 @@ export class Tab1Page {
   bsl:boolean=true;
   btp:boolean=true;
   quantity: number = 1000;
+  mensaje1:string="";
+  mensaje2:string="";
+  mensaje3:string="";
+  
   params:string;
   wsurl: string = "wss://testnet.bitmex.com/realtime?subscribe=instrument";
   ws = new WebSocket(this.wsurl);
@@ -92,12 +96,54 @@ export class Tab1Page {
   async  Sell() {
     this.bitmex.leverage = this.leverage;
     this.bitmex.params= this.params;
-     await this.bitmex.CreateOrder(this.symbol, this.type, "Sell", this.price, this.quantity)    ;
-     if (this.bsl==true)      await this.bitmex.CreateOrder(this.symbol, "Stop", "Buy", this.sl, this.quantity);
+    this.mensaje1="";
+    this.mensaje2="";
+    this.mensaje3="";
+     let resppos=await this.bitmex.CreateOrder(this.symbol, this.type, "Sell", this.price, this.quantity)    ;
+     if (resppos.status==200){
+      //console.log(JSON.stringify(resppos));
+      let dataor=JSON.parse(resppos.data);
+      //console.log("Orden creada",resppos.data);
+      this.mensaje1="Orden creada: "+dataor['orderID'];
+     } else{
+      let error=JSON.parse(resppos.error);
+      //console.log("Objeto error:",JSON.stringify(error));
+      this.mensaje3="Error Position: "+error.error.message;
+     
+     }
+
+     
+     if (this.bsl==true)     {
+      let respsl=await this.bitmex.CreateOrder(this.symbol, "Stop", "Buy", this.sl, this.quantity);
+      if (respsl.status==200){
+        let datasl=JSON.parse(respsl.data);
+       // console.log("Orden SL creada");
+        
+        this.mensaje2="Orden SL Creada: "+datasl['orderID'];
+
+      }else
+      {
+        let error=JSON.parse(respsl.error);
+         //console.log("Objeto error:",JSON.stringify(error));
+         this.mensaje3="Error orden SL: "+error.error.message;
+      }
+     } 
      //await this.bitmex.CreateOrder(this.symbol, "Stop", "Buy", this.sl, this.quantity);
      
-     if (this.btp==true)      await this.bitmex.CreateOrder(this.symbol, "MarketIfTouched", "Buy", this.tp, this.quantity);
-     
+     if (this.btp==true)  
+     {
+      let resptp=await this.bitmex.CreateOrder(this.symbol, "MarketIfTouched", "Buy", this.tp, this.quantity);
+      if (resptp.status==200){
+        //console.log(JSON.stringify(resptp));
+        let datatp=JSON.parse(resptp.data);
+        //console.log("Orden creada",resptp.data);
+        this.mensaje3="Orden creada: "+datatp['orderID'];
+       } else{
+         let error=JSON.parse(resptp.error);
+         //console.log("Objeto error:",JSON.stringify(error));
+         this.mensaje3="Error orden TP: "+error.error.message;
+       }
+     } 
      
 
   }
