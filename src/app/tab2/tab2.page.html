@@ -9,10 +9,13 @@
 
 <ion-content>
 
-   
 
-      
+
+
   <ion-img src="https://www.bitmex.com/img/bitmex-logo-v2-alt-white.png"></ion-img>
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" color="warning" text-center>
+      <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
   <ion-card color="secondary">
 
     <ion-card-content>
@@ -22,36 +25,50 @@
         <ion-item color="primary">
           <ion-label>XBTUSD Positions</ion-label>
         </ion-item>
-        <ion-item *ngFor="let position of positions">
-          <ion-avatar slot="start">
-            <img src="../assets/imgs/{{position.symbol}}.png">
-            <h6><b>{{position.symbol}}</b></h6>
-          </ion-avatar>
-          <ion-label>
-            <h5><b>Size</b>:{{position.currentQty}}</h5>
-            <h5><b>Leverage</b>:{{position.leverage}}X</h5>
+        <ion-spinner name="crescent" *ngIf="busy1" ></ion-spinner>
+        <ion-item-sliding *ngFor="let position of positions">
+          <ion-item *ngIf="((position.symbol=='XBTUSD')&&(position.isOpen==true))">
+            <ion-avatar slot="start">
+              <img src="../assets/imgs/{{position.symbol}}.png">
+              <h6><b>{{position.symbol}}</b></h6>
+            </ion-avatar>
+            <ion-label>
+              <h2 *ngIf="position.currentQty>0"><b>Side:</b>Buy/Long</h2>
+              <h2 *ngIf="position.currentQty<0"><b>Side:</b>Sell/Short</h2>
 
-            <h5><b>Value:</b> {{(position.lastValue/100000000).toLocaleString()}}</h5>
-            <h5><b>Entry Price:</b> {{position.avgEntryPrice.toLocaleString()}}</h5>
-            <h5><b>Liq Price:</b> {{position.liquidationPrice.toLocaleString()}}</h5>
-            <h5><b>Margin:</b> {{(position.posMargin/100000000).toLocaleString()}}</h5>
-            <h5><b>Break Even:</b> {{position.breakEvenPrice.toLocaleString()}}</h5>
+              <h5><b>Size</b>:{{position.currentQty}}</h5>
+              <h5><b>Leverage</b>:{{position.leverage}}X</h5>
 
-            <h5><b>ROE:</b> {{(position.unrealisedPnl/100000000).toLocaleString()}} /
-              {{(position.unrealisedRoePcnt*100).toLocaleString()}}% </h5>
+              <h5><b>Value:</b> {{(position.lastValue/100000000).toLocaleString()}}</h5>
+              <h5><b>Entry Price:</b> {{position.avgEntryPrice.toLocaleString()}}</h5>
+              <h5><b>Liq Price:</b> {{position.liquidationPrice.toLocaleString()}}</h5>
+              <h5><b>Margin:</b> {{(position.posMargin/100000000).toLocaleString()}}</h5>
+              <h5><b>Break Even:</b> {{position.breakEvenPrice.toLocaleString()}}</h5>
 
-          </ion-label>
-          <ion-button color="danger">
-            <ion-icon name="create" slot="end"></ion-icon>
-          </ion-button>
+              <h5 *ngIf="position.unrealisedRoePcnt>0" ><b>ROE:</b><ion-badge color="success" mode="ios">{{(position.unrealisedPnl/100000000).toLocaleString()}} /
+                  {{(position.unrealisedRoePcnt*100).toLocaleString()}}% </ion-badge> </h5>
+              <h5 *ngIf="position.unrealisedRoePcnt<0"><b>ROE:</b> <ion-badge color="danger" mode="ios">{{(position.unrealisedPnl/100000000).toLocaleString()}} /
+                  {{(position.unrealisedRoePcnt*100).toLocaleString()}}% </ion-badge>  </h5>
 
-        </ion-item>
+            </ion-label>
+
+
+
+          </ion-item>
+          <ion-item-options side="end">
+            <ion-item-option>Edit</ion-item-option>
+            <ion-item-option color="danger" (click)="DeleteOrders(position.symbol)">Delete</ion-item-option>
+          </ion-item-options>
+        </ion-item-sliding>
 
       </ion-list>
+
       <ion-list>
         <ion-item color="medium">
-          <ion-label>Pending Orders</ion-label>
+          <ion-label>Pending Orders XBTUSD</ion-label>
         </ion-item>
+
+        <ion-spinner name="crescent" *ngIf="busy2" ></ion-spinner>
         <div *ngFor="let orden of activeorders">
           <ion-item-sliding *ngIf="orden.ordStatus=='New'" text-wrap>
             <ion-item>
@@ -61,24 +78,26 @@
               </ion-avatar>
               <ion-label>
                 <h2>Side:{{orden.side}}</h2>
-                <h3 *ngIf="orden.ordType!='MarketIfTouched'" >Type:{{orden.ordType}}</h3>
-                <h3 *ngIf="orden.ordType=='MarketIfTouched'" >Type:Take Profit</h3>
-           
+                <h3 *ngIf="orden.ordType!='MarketIfTouched'">Type:{{orden.ordType}}</h3>
+                <h3 *ngIf="orden.ordType=='MarketIfTouched'">Type:Take Profit</h3>
+
                 <p>Quantity:{{orden.orderQty}}
                 </p>
 
-                
+
               </ion-label>
               <div *ngIf="((orden.ordType=='Stop')||(orden.ordType=='MarketIfTouched'))">
-                  <ion-badge slot="end" color="primary" mode="ios">Price:{{orden.stopPx}}</ion-badge>
+                <ion-badge slot="end" color="success" mode="ios" *ngIf="orden.ordType=='MarketIfTouched'">
+                  Price:{{orden.stopPx}}</ion-badge>
+                <ion-badge slot="end" color="danger" mode="ios" *ngIf="orden.ordType=='Stop'">Price:{{orden.stopPx}}
+                </ion-badge>
+              </div>
+              <div *ngIf="(orden.ordType=='Limit')">
 
-               </div>
-               <div *ngIf="(orden.ordType=='Limit')">
-                 
-                
-                   <ion-badge slot="end" color="primary" mode="ios">Price:{{orden.price}}</ion-badge>
 
-                  </div>
+                <ion-badge slot="end" color="primary" mode="ios">Price:{{orden.price}}</ion-badge>
+
+              </div>
             </ion-item>
 
             <ion-item-options side="end">

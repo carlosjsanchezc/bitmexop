@@ -72,16 +72,18 @@ async getPositions(symbol:string){
   var shaObj = new jsSHA("SHA-256", "TEXT");
   shaObj.setHMACKey(this.secret, "TEXT");
   let params2 = { 'symbol': symbol,'reverse':true   };
-  let params = "symbol=" + symbol+"&reverse=true"   ;
-  shaObj.update("GET/api/v1/position?"+params + nonce.toString() );
+  let params = ""   ;
+  console.log("Params:",params);
+  shaObj.update("GET/api/v1/position"+params + nonce.toString() );
   var hmac = shaObj.getHMAC("HEX");
   let header = { 'accept-charset'	:'UTF-8','content-type':'application/x-www-form-urlencoded; charset=UTF-8', 'api-signature': hmac, 'api-key': this.id, 'api-nonce': nonce.toString(), 'Connection': 'Keep-Alive', 'Keep-Alive': '90','user-agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36' };
   let url = 'https://testnet.bitmex.com/api/v1/position?'+params;
   try {
-    let myd = await this.webClient.get(url, {}, header);
+    let myd = await this.webClient.get(url,{}, header);
     return myd;
   } 
   catch (error) {
+    console.log("Error obteniendo posiciones",error.error);
     return error;
   }
 }
@@ -133,8 +135,45 @@ async getActiveOrders(symbol:string){
   }
 }
 
+async cancelPositionsSymbols(symbol:string){
+  let fecha = new Date();
+  let nonce = fecha.getTime() * 100 + fecha.getMilliseconds();
+  var shaObj = new jsSHA("SHA-256", "TEXT");
+  shaObj.setHMACKey(this.secret, "TEXT");
+  let params2 = { 'symbol': symbol};
+  let params = "symbol=" + symbol   ;
+  shaObj.update("POST/api/v1/order/closePosition?"+params + nonce.toString() );
+  var hmac = shaObj.getHMAC("HEX");
+  let header = { 'accept-charset'	:'UTF-8','content-type':'application/x-www-form-urlencoded; charset=UTF-8', 'api-signature': hmac, 'api-key': this.id, 'api-nonce': nonce.toString(), 'Connection': 'Keep-Alive', 'Keep-Alive': '90','user-agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36' };
+  let url = 'https://testnet.bitmex.com/api/v1/order/closePosition?'+params;
+  try {
+    let myd = await this.webClient.post(url, {}, header);
+   console.log("Tratando de mostrar los q se borran"+symbol);
+    console.log(JSON.stringify(myd.data));
+    return myd.data;
+  } 
+  catch (error) {
+    console.log("Error",error);
+    return error;
+  }
+}
 
+async getSymbols(){
+  let url = 'https://testnet.bitmex.com/api/v1/instrument?symbol=XBTUSD';
+  let myd = await this.webClient.get(url,{}, {});
+  let datos=JSON.parse(myd.data);
+  let ret:any=[];
+  ret['XBTUSD']=datos[0]['lastPrice'];
 
+  url = 'https://testnet.bitmex.com/api/v1/instrument?symbol=ETHUSD';
+  myd = await this.webClient.get(url,{}, {});
+  datos=JSON.parse(myd.data);
+  ret['ETHUSD']=datos[0]['lastPrice'];
+  
+    
+  console.log(ret);
+  return ret;
+}
   async CreateOrder(symbol: string, type: string, side: string, price: number, quantity: number) {
     await this.setLeverage(symbol,this.leverage);
     let priceStop=price;
@@ -238,14 +277,14 @@ async getActiveOrders(symbol:string){
               params ="ordType=" + type+"&orderQty=" + quantity.toString()+ "&side=" + side + "&stopPx="+price.toString()+"&symbol=" + symbol  ;
             }
             else{
-              params = "symbol=" + symbol + "&side=" + side + "&orderQty=" + quantity.toString() + "&ordType=" + type ;
+              params = "symbol=" + symbol + "&side=" + side + "&orderQty=" + quantity.toString() + "&ordType=" + type+"&stopPx="+price.toString() ;
               params2['symbol']=symbol;
               params2['side']=side;
               params2['orderQty']=quantity;
               params2['ordType']=type;
               params2['stopPx']=price;
-             
-
+              console.log(params);
+              console.log(params2);
             }
         
         break;

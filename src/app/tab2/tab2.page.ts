@@ -11,6 +11,8 @@ export class Tab2Page {
   activeorders:any=[];
   mensaje:string="";
   resp1:string;
+  busy1:boolean=false;
+  busy2:boolean=false;
   constructor(private bitmex:BitmexService) {
     this.positions=[];
 
@@ -18,24 +20,41 @@ export class Tab2Page {
     console.log(this.positions);
     setInterval(() => { 
       this.ionViewWillEnter(); // Now the "this" still references the component
-   }, 1500000);
+   }, 30000);
   }
 
-  async DeleteOrder(orderId){
-  console.log("borrar:",orderId);
+  doRefresh(event) {
+    console.log('Begin async operation');
+
+    setTimeout(() => {
+      this.ionViewWillEnter();
+      event.target.complete();
+    }, 2000);
+  }
+  async DeleteOrder(id){
+    console.log("borrar:",id);
+    
+    await this.bitmex.delOrder(id);
+    this.ionViewWillEnter();
+  }
+  async DeleteOrders(symbol){
+  console.log("borrar:",symbol);
   
-  await this.bitmex.delOrder(orderId);
+  await this.bitmex.cancelPositionsSymbols(symbol);
   this.ionViewWillEnter();
 }
   async ionViewWillEnter(){
    
     
-
+    this.busy1=true;
     let c=await this.bitmex.getPositions("XBTUSD");
     this.positions=JSON.parse(c.data);
+    this.busy1=false;
+    this.busy2=true;
     let d=await this.bitmex.getActiveOrders("XBTUSD");
-  
-        //console.log("Ordenes activas:",d.data);
+    this.busy2=false;
+    console.log("Posiciones:",c.data);
+    console.log("Ordenes activas:",d.data);
     this.activeorders=JSON.parse(d);
     //console.log("Ordenes Activas:",this.activeorders);
 

@@ -12,35 +12,22 @@
 	<ion-item color="secondary">
 		<ion-grid fixed>
 			<ion-row>
-				<ion-col size="3">
+				<ion-col size="6">
 					XBTUSD
 
 				</ion-col>
-				<ion-col size="2">
+				<ion-col size="6">
 					ETHUSD
 
 				</ion-col>
-				<ion-col size="3">
-					LTCU19
 
-				</ion-col>
-				<ion-col size="4">
-					XRPU19
-
-				</ion-col>
 			</ion-row>
 			<ion-row>
-				<ion-col size="3">
+				<ion-col size="6">
 					<ion-badge color="primary" mode="ios">{{xbtusd.toLocaleString()}}</ion-badge>
 				</ion-col>
-				<ion-col size="2">
+				<ion-col size="6">
 					<ion-badge color="primary" mode="ios">{{ethusd}}</ion-badge>
-				</ion-col>
-				<ion-col size="3">
-					<ion-badge color="primary" mode="ios">{{ltcu19}}</ion-badge>
-				</ion-col>
-				<ion-col size="4">
-					<ion-badge color="primary" mode="ios">{{xrpu19}}</ion-badge>
 				</ion-col>
 			</ion-row>
 		</ion-grid>
@@ -52,7 +39,7 @@
 		<ion-card-content>
 			<ion-item>
 				<ion-label>Pair</ion-label>
-				<ion-select placeholder="Symbol" interface="popover" [(ngModel)]="symbol">
+				<ion-select placeholder="Symbol" interface="popover" [(ngModel)]="symbol" (ionChange)="validarsltp()">
 					<ion-select-option value="XBTUSD">XBTUSD</ion-select-option>
 					<ion-select-option value="ETHUSD">ETHUSD</ion-select-option>
 				</ion-select>
@@ -73,29 +60,29 @@
 				<ion-label>Quantity</ion-label>
 				<ion-input type="number" class="ion-text-right" pattern="[0-9].*" [(ngModel)]="quantity"></ion-input>
 			</ion-item>
-			<ion-item *ngIf="type=='Limit'">
+			<ion-item *ngIf="(type=='Limit')||(type=='Stop Market')">
 				<ion-label>Price</ion-label>
 				<ion-input type="number" class="ion-text-right" pattern="[0-9]*.d"  [(ngModel)]="price"></ion-input>
 			</ion-item>
 			<ion-item >
 				<ion-label>Stop Loss</ion-label>
 
-					<ion-checkbox slot="end" [(ngModel)]="bsl"></ion-checkbox>
+					<ion-checkbox slot="end" [(ngModel)]="bsl" (ionChange)="validarsltp()"></ion-checkbox>
 				<ion-input type="number" class="ion-text-right" pattern="[0-9]*" (ionChange)="validarsltp()" [(ngModel)]="sl"></ion-input>
 			</ion-item>
 			<ion-item>
 				<ion-label>Take Profit</ion-label>
-				<ion-checkbox slot="end" [(ngModel)]="btp"></ion-checkbox>
+				<ion-checkbox slot="end" [(ngModel)]="btp" (ionChange)="validarsltp()"></ion-checkbox>
 	
-				<ion-input type="number" class="ion-text-right" pattern="[0-9]*"  [(ngModel)]="tp"></ion-input>
+				<ion-input type="number" class="ion-text-right" pattern="[0-9]*" (ionChange)="validarsltp()" [(ngModel)]="tp"></ion-input>
 			</ion-item>
 			<ion-row>
 				<ion-col size="6">
-					<ion-button expand="block" (click)="Buy()" color="success" >
+					<ion-button expand="block" (click)="Buy()" color="success" disabled="{{buydisabled}}">
 						Buy/Long </ion-button>
 				</ion-col>
 				<ion-col size="6">
-					<ion-button expand="block" (click)="Sell()" color="danger">
+					<ion-button expand="block" (click)="Sell()" color="danger"  disabled="{{selldisabled}}">
 						Sell/Short
 					</ion-button>
 				</ion-col>

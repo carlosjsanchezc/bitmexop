@@ -1,5 +1,4 @@
 import { BitmexService } from './../bitmex.service';
-import { RealtimeService } from './../realtime.service';
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { isUndefined } from 'util';
@@ -23,13 +22,14 @@ export class Tab1Page {
   preciosymbol=0;
   sl: number = 0;
   tp: number = 0;
-  bsl:boolean=true;
-  btp:boolean=true;
+  bsl:boolean=false;
+  btp:boolean=false;
   quantity: number = 1000;
   mensaje1:string="";
   mensaje2:string="";
   mensaje3:string="";
-  
+  selldisabled:boolean=false;
+  buydisabled:boolean=false;
   params:string;
   wsurl: string = "wss://testnet.bitmex.com/realtime?subscribe=instrument";
   ws = new WebSocket(this.wsurl);
@@ -40,7 +40,10 @@ export class Tab1Page {
 
   }
   
-  ionViewDidEnter(){
+  async ionViewDidEnter(){
+    let prices=await this.bitmex.getSymbols();
+    this.xbtusd=prices['XBTUSD'];
+    this.ethusd=prices['ETHUSD'];
     
     this.ws.onerror = (e) => {
       console.log("Estamos en error");
@@ -90,12 +93,27 @@ export class Tab1Page {
     this.mensaje1="";
     this.mensaje2="";
     this.mensaje3="";
-     let resppos=await this.bitmex.CreateOrder(this.symbol, this.type, "Buy", this.price, this.quantity)    ;
+    let resppos:any;
+    if (this.type=="Stop Market"){
+      resppos=await this.bitmex.CreateOrder(this.symbol,"Stop", "Buy", this.price, this.quantity)    ;
+   
+    }
+    if (this.type=="Take Profit"){
+      resppos=await this.bitmex.CreateOrder(this.symbol,"MarketIfTouched", "Buy", this.price, this.quantity)    ;
+   
+    }
+    if ((this.type=="Limit")||this.type=="Market"){
+      resppos=await this.bitmex.CreateOrder(this.symbol, this.type, "Buy", this.price, this.quantity)    ;
+   
+    }
+     //let resppos=await this.bitmex.CreateOrder(this.symbol, this.type, "Buy", this.price, this.quantity)    ;
      if (resppos.status==200){
       //console.log(JSON.stringify(resppos));
       let dataor=JSON.parse(resppos.data);
       //console.log("Orden creada",resppos.data);
       this.mensaje1="Orden creada: "+dataor['orderID'];
+      this.presentToast(this.mensaje1);
+
      } else{
       let error=JSON.parse(resppos.error);
       //console.log("Objeto error:",JSON.stringify(error));
@@ -142,16 +160,37 @@ export class Tab1Page {
 
   }
   validarsltp(){
+    this.selldisabled=false;
+    this.buydisabled=false;
     this.preciosymbol=this.xbtusd;
     if (this.symbol=="ETHUSD") this.preciosymbol=this.ethusd;
     if ((this.bsl==true)){
       if (this.sl>this.xbtusd){
           console.log("Solo short:");
+          this.selldisabled=false;
+          this.buydisabled=true;
+
       }else 
       {
           console.log("Solo long");
+          this.buydisabled=false;
+          this.selldisabled=true;
       }
     }
+    if ((this.btp==true)){
+      if (this.tp>this.xbtusd){
+          console.log("Solo Long:");
+          this.buydisabled=false;
+          this.selldisabled=true;
+
+      }else 
+      {
+          console.log("Solo Short");
+          this.selldisabled=false;
+          this.buydisabled=true;
+      }
+    }
+    
        
   }
   
@@ -163,8 +202,21 @@ export class Tab1Page {
     this.mensaje1="";
     this.mensaje2="";
     this.mensaje3="";
-     let resppos=await this.bitmex.CreateOrder(this.symbol, this.type, "Sell", this.price, this.quantity)    ;
-     if (resppos.status==200){
+    let resppos:any;
+    if (this.type=="Stop Market"){
+      resppos=await this.bitmex.CreateOrder(this.symbol,"Stop", "Sell", this.price, this.quantity)    ;
+   
+    }
+    if (this.type=="Take Profit"){
+      resppos=await this.bitmex.CreateOrder(this.symbol,"MarketIfTouched", "Sell", this.price, this.quantity)    ;
+   
+    }
+    if ((this.type=="Limit")||this.type=="Market"){
+      resppos=await this.bitmex.CreateOrder(this.symbol, this.type, "Sell", this.price, this.quantity)    ;
+   
+    }
+    
+    if (resppos.status==200){
       //console.log(JSON.stringify(resppos));
       let dataor=JSON.parse(resppos.data);
       //console.log("Orden creada",resppos.data);
