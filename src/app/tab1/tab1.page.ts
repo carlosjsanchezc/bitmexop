@@ -163,35 +163,53 @@ export class Tab1Page {
     this.selldisabled=false;
     this.buydisabled=false;
     this.preciosymbol=this.xbtusd;
+    let var1:string;
+    let var2:string;
     if (this.symbol=="ETHUSD") this.preciosymbol=this.ethusd;
     if ((this.bsl==true)){
       if (this.sl>this.preciosymbol){
           console.log("Solo short:");
-          this.selldisabled=false;
-          this.buydisabled=true;
-
+          var1="short";
       }else 
       {
           console.log("Solo long");
-          this.buydisabled=false;
-          this.selldisabled=true;
-      }
+          var1="long";
+        }
     }
     if ((this.btp==true)){
       if (this.tp>this.preciosymbol){
           console.log("Solo Long:");
-          this.buydisabled=false;
-          this.selldisabled=true;
+          var2="long";
 
       }else 
       {
           console.log("Solo Short");
-          this.selldisabled=false;
-          this.buydisabled=true;
+          var2="short";
+        }
+    }
+    if ((this.btp==true)&&(this.bsl==false)){
+      var1=var2;
+    }
+    if ((this.btp==false)&&(this.bsl==true)){
+      var2=var1;
+    }
+    if (var2!=var1){
+      this.selldisabled=true;
+      this.buydisabled=true;
+    }else
+    {
+      if (var1=="long"){
+        this.selldisabled=true;
+        this.buydisabled=false;
+  
+      }else {
+        this.selldisabled=false;
+        this.buydisabled=true;
+
       }
     }
-    
        
+
   }
   
 
