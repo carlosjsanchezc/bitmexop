@@ -35,6 +35,15 @@ const routes: Routes = [
         ]
       },
       {
+        path: 'acerca',
+        children: [
+          {
+            path: '',
+            loadChildren: '../acerca/acerca.module#AcercaPageModule'
+          }
+        ]
+      },
+      {
         path: '',
         redirectTo: '/tabs/tab1',
         pathMatch: 'full'
@@ -43,7 +52,7 @@ const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: '/tabs/tab1',
+    redirectTo: '/tabs/acerca',
     pathMatch: 'full'
   }
 ];
